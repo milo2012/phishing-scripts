@@ -1,9 +1,5 @@
 # phishing-scripts
 Some miscellaneous phishing scripts
-| Left-aligned | Center-aligned | Right-aligned |
-| :---         |     :---:      |          ---: |
-| git status   | git status     | git status    |
-| git diff     | git diff       | git diff      |
 
 | Script | Description |
 | --- | --- |
