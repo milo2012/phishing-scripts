@@ -10,6 +10,7 @@ Some miscellaneous phishing scripts
   
   
   
+  
 **Sample output from gophishauto.py**
 ```
 $  python gophishauto3.py -a 212345436346 -i 192.168.0.181 -p 3333 --ssl -n 14 
@@ -45,8 +46,8 @@ bbb@yahoo.com
 ccc@yahoo.com
 
 [+] Unique Browser User Agents (OS Matching)
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36 [Mac OS X 10.12.6]
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 [Windows 7]
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36 **[Mac OS X 10.12.6]**
+Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 **[Windows 7]**
 
 [+] Browser User Agents
 ----------------------------------  ------------------------------------------------------------------------------------------------------------------------
