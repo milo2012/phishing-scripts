@@ -10,7 +10,7 @@ Some miscellaneous phishing scripts
   
   
   
-*** Sample output from gophishauto.py ***
+**Sample output from gophishauto.py**
 ```
 $  python gophishauto3.py -a 212345436346 -i 192.168.0.181 -p 3333 --ssl -n 14 
 
