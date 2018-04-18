@@ -7,14 +7,11 @@ from ua_parser import user_agent_parser
 import requests
 from IPy import IP
 
-#python gophishauto3.py -a ***REMOVED*** -i 192.168.0.180 -p 3334 -n 25,26,27,28 --push -c 
-
-pushover_userKey='***REMOVED***'
-pushover_apiToken='***REMOVED***'
+pushover_userKey=''
+pushover_apiToken=''
 client = Client(pushover_userKey, api_token=pushover_apiToken)
 
-API_KEY ='***REMOVED***'
-API_KEY = ''
+API_KEY =''
 tmpSelectedProjectList=[]
 tmpResultPwdList=[]
 lastCount=0
@@ -40,7 +37,7 @@ def sendPushover(title,msg):
 
 def sendSlack(msg):
 	#https://api.slack.com/tokens
-	r = requests.post('https://hooks.slack.com/services/***REMOVED***', json={"text": msg})
+	r = requests.post('https://hooks.slack.com/services/', json={"text": msg})
 	if r.status_code==200:
 		return True
 	else:
@@ -53,6 +50,7 @@ parser.add_option('-l', '--list', action="store_true", help="List projects")
 parser.add_option('--ip', action="store_true", help="Display Public IP addresses of victims")
 parser.add_option('-c', action="store_true", help="Continue looping and check for updates")
 parser.add_option('--push',  action="store_true", help="Push Notifications")
+parser.add_option('--ssl',  action="store_true", help="Enable SSL")
 parser.add_option('-i', action="store", dest="hostIP", help="Server IP")
 parser.add_option('-p', action="store", dest="portNo", help="Server Port No")
 loadedFile=[]
@@ -65,9 +63,13 @@ if options.push:
 if options.apiKey:
 	API_KEY=options.apiKey
 if options.hostIP and options.portNo:
-	url = 'http://'+options.hostIP+':'+str(options.portNo)+'/api/campaigns/?api_key='+API_KEY
+	if options.ssl:
+		url = 'https://'+options.hostIP+':'+str(options.portNo)+'/api/campaigns/?api_key='+API_KEY
+	else:
+		url = 'http://'+options.hostIP+':'+str(options.portNo)+'/api/campaigns/?api_key='+API_KEY
 else:
-	url = 'http://192.168.0.180:3333/api/campaigns/?api_key='+API_KEY
+	print "[!] Please provide the -i and -p arguments\n"
+	sys.exit()
 print url
 
 resp = requests.get(url=url,verify=False)
@@ -124,9 +126,12 @@ for selectedProjectID in tmpSelectedProjectList:
 
 			tmpResultList=(x['results'])
 			for y in tmpResultList:
-				if y['status']=='Email Sent' or y['status']=='Email Opened' or y['status']=='Success' or y['status']=='Email Opened':
+				if y['status']=='Email Sent' or y['status']=='Clicked Link' or y['status']=='Submitted Data' or y['status']=='Email Opened' or y['status']=='Success':
 					tmpProjectUserCount+=1		
-			projectCountDict[projectName]=tmpProjectUserCount		
+			projectCountDict[projectName]=tmpProjectUserCount
+	#print "\n"
+	#print tmpProjectUserCount	
+	#sys.exit()	
 while 1:
 	resp = requests.get(url=url,verify=False)
 	data = resp.json()
@@ -169,13 +174,13 @@ while 1:
 
 				lastLinkClickedCount=linkClickedCountList[projectName]
 				for y in tmpResultList:
-					if y['status']=='Success' or y['status']=='Email Opened':
-						if [projectName,y['email'],y['status'],y['ip']] not in tmpStatusList:
-							tmpStatusList.append([projectName,y['email'],y['status'],y['ip']])
-						if y['status']=='Email Opened':
-							emailOpenedCount+=1
-						if y['status']=='Success':
-							emailSuccessCount+=1
+					#if y['status']=='Success' or y['status']=='Email Opened' or y['status']=='Clicked Link' or y['status']=="Submitted Data":
+					if [projectName,y['email'],y['status'],y['ip']] not in tmpStatusList:
+						tmpStatusList.append([projectName,y['email'],y['status'],y['ip']])
+					if y['status']=='Email Opened':
+						emailOpenedCount+=1
+					if y['status']=='Success'or y['status']=="Submitted Data":
+						emailSuccessCount+=1
 
 				currentEmailOpenCount=0
 				currentEmailClickCount=0
@@ -183,7 +188,7 @@ while 1:
 					if x[0]==projectName:
 						if x[2]=="Email Opened":
 							currentEmailOpenCount+=1
-						if x[2]=="Success":
+						if x[2]=="Success" or x[2]=="Clicked Link" or x[2]=="Submitted Data":
 							currentEmailClickCount+=1
 
 				if len(tmpResultPwdList)>capturedPwdList[projectName] or currentEmailOpenCount>emailOpenedCountList[projectName] or currentEmailClickCount>emailSuccessCountList[projectName]:
@@ -203,7 +208,7 @@ while 1:
 							if "Email Opened" in x[2]:
 								if x[1] not in tmpEmailOpenedList:
 									tmpEmailOpenedList.append(x[1])
-							if "Success" in x[2]:
+							if "Success" in x[2] or "Clicked Link" in x[2] or "Submitted Data" in x[2]:
 								if x[1] not in tmpLinkClickedList:
 									tmpLinkClickedList.append(x[1])	
 					tmpMsg='[*] Users who read the email\n'
@@ -310,7 +315,7 @@ while 1:
 
 					emailSuccessPercentage=round(float(len(tmpLinkClickedList))/float(projectCountDict[projectName])*100,2)
 					tmpMsgHeader+='Clicked Link: '+str(len(tmpLinkClickedList))+" ("+str(emailSuccessPercentage)+"%)\n"
-
+				
 					if len(tmpLinkClickedList)>len(tmpList1):
 						emailUnreadPercentage=round(float(projectCountDict[projectName]-len(tmpLinkClickedList))/float(projectCountDict[projectName])*100,2)
 						tmpMsgHeader+='Email Unread: '+str(projectCountDict[projectName]-len(tmpLinkClickedList))+" ("+str(emailUnreadPercentage)+"%)\n"
